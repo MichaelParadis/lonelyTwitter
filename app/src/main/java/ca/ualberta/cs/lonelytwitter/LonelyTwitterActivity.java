@@ -2,6 +2,7 @@ package ca.ualberta.cs.lonelytwitter;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -43,6 +44,7 @@ public class LonelyTwitterActivity extends Activity {
 		bodyText = (EditText) findViewById(R.id.body);
 		Button saveButton = (Button) findViewById(R.id.save);
 		oldTweetsList = (ListView) findViewById(R.id.oldTweetsList);
+		Button clearButton = (Button) findViewById(R.id.clear);
 
 		saveButton.setOnClickListener(new View.OnClickListener() {
 
@@ -54,10 +56,27 @@ public class LonelyTwitterActivity extends Activity {
 
 				tweetList.add(newTweet);
 				adapter.notifyDataSetChanged();
-
 				saveInFile();
+//				saveInFile(text, new Date(System.currentTimeMillis()));
+//				finish();
+
 			}
 		});
+		clearButton.setOnClickListener(new View.OnClickListener() {
+
+			public void onClick(View v) {
+				setResult(RESULT_OK);
+				clearFile();
+				tweetList.clear();
+				saveInFile();
+				oldTweetsList.clearAnimation();
+				adapter.notifyDataSetChanged();
+//				saveInFile(text, new Date(System.currentTimeMillis()));
+//				finish();
+
+			}
+		});
+
 	}
 
 	@Override
@@ -65,43 +84,42 @@ public class LonelyTwitterActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onStart();
 		loadFromFile();
+//		String[] tweets = loadFromFile();
 		adapter = new ArrayAdapter<Tweet>(this,
 				R.layout.list_item, tweetList);
 		oldTweetsList.setAdapter(adapter);
 	}
 
 	private void loadFromFile() {
+
 		try {
 			FileInputStream fis = openFileInput(FILENAME);
 			BufferedReader in = new BufferedReader(new InputStreamReader(fis));
-
 			Gson gson = new Gson();
-
-			// Code from http://stackoverflow.com/questions/12384064/gson-convert-from-json-to-a-typed-arraylistt
+			// From the lab got it from stackoverflow.com/questions/12384064
 			Type listType = new TypeToken<ArrayList<NormalTweet>>(){}.getType();
-
-			tweetList = gson.fromJson(in,listType);
+			tweetList = gson.fromJson(in, listType);
 
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			tweetList = new ArrayList<Tweet>();
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			throw new RuntimeException();
 		}
+
 	}
-	
+
 	private void saveInFile() {
 		try {
 			FileOutputStream fos = openFileOutput(FILENAME,
-					0);
-
+					Context.MODE_PRIVATE);
 			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(fos));
-
 			Gson gson = new Gson();
-			gson.toJson(tweetList, out);
-			out.flush();
 
+			gson.toJson(tweetList,out);
+			out.flush();
 			fos.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -111,4 +129,17 @@ public class LonelyTwitterActivity extends Activity {
 			throw new RuntimeException();
 		}
 	}
+	private void clearFile(){
+		try {
+
+			File file = new File(FILENAME);
+			file.delete();
+		} catch (Exception e) { throw new RuntimeException();}
+
+
+
+
+
+	}
+
 }
