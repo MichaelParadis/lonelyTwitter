@@ -14,4 +14,7 @@ public class ImportantTweet extends Tweet {
         return Boolean.TRUE;
     }
 
+    public int compareTo(Object o) {
+        return  this.getDate().compareTo(((Tweet)o).getDate());
+    }
 }

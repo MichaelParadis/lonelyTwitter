@@ -13,4 +13,9 @@ public class NormalTweet extends Tweet implements Tweetable {
     public Boolean isImportant() {
         return Boolean.FALSE;
     }
+
+
+    public int compareTo(Object o) {
+        return  this.getDate().compareTo(((Tweet)o).getDate());
+    }
 }
