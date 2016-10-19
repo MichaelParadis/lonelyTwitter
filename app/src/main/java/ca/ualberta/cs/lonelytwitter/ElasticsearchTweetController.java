@@ -27,6 +27,8 @@ public class ElasticsearchTweetController {
         @Override
         protected ArrayList<NormalTweet> doInBackground(String... search_parameters) {
             verifySettings();
+            // String search_string = "{\"from\":0, \"size\":10000}";
+            // String search_string = "{\"from\":0, \"size\":10000, \"query\" : {\"match}\": {\"message\":\""+ search_parameters[0] + "\"}}}";
 
             ArrayList<NormalTweet> tweets = new ArrayList<NormalTweet>();
 
